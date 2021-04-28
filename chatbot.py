@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Welcome to Wouter and Ruben's great AI. How can I help you?
+# Welcome to Wouter's great AI. How can I help you?
 
 import sys
 import random
