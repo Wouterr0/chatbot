@@ -1,5 +1,5 @@
 def red(s): # Debug messages
-    return f"\033[31m{s}\033[0m"
+    return f"\033[1;31m{s}\033[0m"
 def green(s): # Status updates
     return f"\033[32m{s}\033[0m"
 def yellow(s): # User input
