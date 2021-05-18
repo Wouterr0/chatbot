@@ -63,7 +63,7 @@ response_patterns = [
         r"I don't know if i'm \g<1>. Are you?"]),
     
     R(r"why ((?:am|are|is|was|were|will)(?:n't)?) (.*)", [
-        r"I have absolutely no idea why \g<2> \g<1>."]),
+        r"I have absolutely no idea why \g<2> \g<1>."], True),
     
     R(r"because (.*)", [
         r"Aah, right. Because \g<1>."]),
@@ -74,21 +74,33 @@ response_patterns = [
     R(r"stop (.*)", [
         r"I will never stop \g<1>."]),
     
+    R(r"f(?:uck)?\s(?:u|you)(\s.*)?", [
+        r"stfu\g<1>"]),
+    
     R(r".+", [
         r"What do you mean \g<0>."], True),
 ]
 
 
-connectors = ["I'd like to hear more.", "That sounds interesting.", "Can you explain more?", "Tell me more!", "Nice! How can I help you?"]
+connectors = ["I'd like to hear more.",
+              "That sounds interesting.",
+              "Can you explain more?",
+              "Tell me more!",
+              "Nice! How can I help you?"]
 
-welcome_messages = ["Hello!", "What's up?", "Hi!", "Welcome to Wouter's great AI. How can I help you?"]
+welcome_messages = [r"Hello, {}!",
+                    r"What's up, {}?",
+                    r"Hi, {}!",
+                    r"Welcome to Wouter's great AI. How can I help you?"]
 
-def get_welcome():
-    return random.choice(welcome_messages)
+def get_welcome_msg(user):
+    return random.choice(welcome_messages).format(user.user_name)
 
 def set_debug(debug):
     global DEBUG
     DEBUG = debug
+
+# TODO: add informal patterns like "ain't": "am not"
 
 pronoun_patterns = {
     "you":  "I",
@@ -97,6 +109,8 @@ pronoun_patterns = {
     "my":   "your",
     "am":   "are",
     "are":  "am",
+    "'m":   "'re",
+    "'re":   "'m",
 }
 
 def sub_pronouns(matchobj):
@@ -105,7 +119,9 @@ def sub_pronouns(matchobj):
         return pronoun_patterns[match]
 
 def swap_pronouns(phrase):
-    pronoun_pattern = r"(?<=\b)(?:" + '|'.join((p for p in pronoun_patterns)) + r")(?=\b)"
+    pronoun_pattern = (r"(?<=\b)(?:"
+                       + '|'.join((p for p in pronoun_patterns))
+                       + r")(?=\b)")
     phrase = re.sub(pronoun_pattern, sub_pronouns, phrase).strip()
     return phrase
 
@@ -120,6 +136,9 @@ def generate_response(user_phrase):
             if DEBUG:
                 print(red("User phrase:\t" + user_phrase))
                 print(red("Pattern:\t" + response_pattern.pattern))
-            return re.sub(response_pattern.pattern, random.choice(response_pattern.responses), user_phrase)
+                print(red("Responses:\t" + str(response_pattern.responses)))
+            return re.sub(response_pattern.pattern,
+                          random.choice(response_pattern.responses),
+                          user_phrase)
     else:
         return random.choice(connectors)
