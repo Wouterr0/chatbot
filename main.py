@@ -8,6 +8,7 @@ from gtts import gTTS
 from playsound import playsound
 
 from chatbot import *
+from user_management import *
 from utils import *
 
 
@@ -64,10 +65,26 @@ def give_user_output(output):
     if not DEBUG:
         say(output)
 
+def get_register_or_login():
+    print(blue("[R]egister or [L]ogin: "), end="\033[33m")
+    choice = input().lower()
+
+def home():
+    print(blue("[R]egister or [L]ogin: "), end="\033[33m")
+    choice = input().lower()
+    if choice == "r":
+        register()
+        return home()
+    elif choice == "l":
+        return login()
+    else:
+        print(blue(""))
+        return home()
 
 
 if __name__ == "__main__":
-    welcome(get_welcome())
+    user = home()
+    welcome(get_welcome_msg(user))
 
     if not DEBUG:
         r = sr.Recognizer()

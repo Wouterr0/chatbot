@@ -8,7 +8,7 @@ from utils import *
 class Response_pattern:
     pattern: str
     responses: list
-    swap_pronouns: bool = False
+    swap_pronouns: bool = True
 
 
 R = Response_pattern
@@ -62,14 +62,23 @@ response_patterns = [
         r"I don't think I am \g<1>.",
         r"I don't know if i'm \g<1>. Are you?"]),
     
-    R(r"why ((?:am|are|is|was|were|will)(?:n't)?) (.*)", [
-        r"I have absolutely no idea why \g<2> \g<1>."], True),
+    R((r"why ((?:am|are|is|was|were|can|may|could|be|do|does|did|have|had|has|"
+       r"may|might|must|shall|should|will|would)(?:n't)?) (.*)"), [
+        r"I have absolutely no idea why \g<2> \g<1>."]),
     
+    R((r"i ((?:am|was|have|had|do|did|say|said|make|made|went|took|came|see|"
+       r"saw|get|got|will|would)(?:n't)?)(?:(\s)(.*))?"), [
+        r"I think it's good that you \g<3>\g<2>\g<1>."]),
+    
+    R((r"(?:you|u) ((?:are|was|have|had|do|did|say|said|make|made|went|took|"
+       r"came|see|saw|get|got|will|would)(?:n't)?)(?:(\s)(.*))?"), [
+        r"Are you sure I \g<1>\g<2>\g<3>?"]),
+
     R(r"because (.*)", [
         r"Aah, right. Because \g<1>."]),
     
-    R(r"i mean (.*)", [
-        r"I don't think you ment \g<1>."]),
+    R(r"i (mean|ment) (.*)", [
+        r"I don't think you \g<1> \g<2>."]),
     
     R(r"stop (.*)", [
         r"I will never stop \g<1>."]),
@@ -78,7 +87,7 @@ response_patterns = [
         r"stfu\g<1>"]),
     
     R(r".+", [
-        r"What do you mean \g<0>."], True),
+        r"What do you mean \g<0>."]),
 ]
 
 
@@ -106,6 +115,7 @@ pronoun_patterns = {
     "you":  "I",
     "your": "my",
     "i":    "you",
+    "me":    "you",
     "my":   "your",
     "am":   "are",
     "are":  "am",
@@ -113,32 +123,39 @@ pronoun_patterns = {
     "'re":   "'m",
 }
 
+pronoun_pattern = (r"(?<=\b)(?:"
+                     + r"|".join((p for p in pronoun_patterns))
+                     + r")(?=\b)")
+
+
 def sub_pronouns(matchobj):
     match = matchobj.group(0)
     if match in pronoun_patterns:
         return pronoun_patterns[match]
 
 def swap_pronouns(phrase):
-    pronoun_pattern = (r"(?<=\b)(?:"
-                       + '|'.join((p for p in pronoun_patterns))
-                       + r")(?=\b)")
     phrase = re.sub(pronoun_pattern, sub_pronouns, phrase).strip()
     return phrase
 
 
+def sub_hack(matchobj):
+    return "QQQ" + matchobj.group(0)
 
 def generate_response(user_phrase):
     for response_pattern in response_patterns:
         match = re.fullmatch(response_pattern.pattern, user_phrase)
         if match:
-            if response_pattern.swap_pronouns:
-                user_phrase = swap_pronouns(user_phrase)
             if DEBUG:
                 print(red("User phrase:\t" + user_phrase))
                 print(red("Pattern:\t" + response_pattern.pattern))
                 print(red("Responses:\t" + str(response_pattern.responses)))
-            return re.sub(response_pattern.pattern,
-                          random.choice(response_pattern.responses),
-                          user_phrase)
+            user_phrase = re.sub(response_pattern.pattern,
+                re.sub(pronoun_pattern,
+                    sub_hack,
+                    random.choice(response_pattern.responses),
+                    flags=re.IGNORECASE),
+                user_phrase)
+            user_phrase = swap_pronouns(user_phrase)
+            return user_phrase.replace("QQQ", '') # scuffed hack here
     else:
         return random.choice(connectors)
