@@ -12,7 +12,7 @@ from user_management import *
 from utils import *
 
 
-DEBUG = True
+DEBUG = False
 set_debug(DEBUG)
 
 
@@ -84,11 +84,10 @@ def home():
 
 if __name__ == "__main__":
     user = home()
-    welcome(get_welcome_msg(user))
-
     if not DEBUG:
         r = sr.Recognizer()
         calibrate()
+    welcome(get_welcome_msg(user))
 
     while True:
         user_phrase = get_user_input()
