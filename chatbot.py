@@ -57,6 +57,12 @@ response_patterns = [
     R(r"would you like to (.*)", [
         r"I don't know."]),
     
+    R(r"is (.*)", [
+        r"I think so?",
+        r"I don't think so?",
+        r"Yes, right?",
+        r"No, right?"]),
+    
     R(r"are you (.*)", [
         r"Last time I checked I wasn't \g<1>.",
         r"I don't think I am \g<1>.",
@@ -124,7 +130,8 @@ pronoun_patterns = {
 }
 
 pronoun_pattern = (r"(?<=\b)(?:"
-                     + r"|".join((p for p in pronoun_patterns))
+                     + r"|".join((p.replace("'",
+                                            "QQQ") for p in pronoun_patterns))
                      + r")(?=\b)")
 
 
@@ -139,7 +146,7 @@ def swap_pronouns(phrase):
 
 
 def sub_hack(matchobj):
-    return "QQQ" + matchobj.group(0)
+    return "XXX" + matchobj.group(0)
 
 def generate_response(user_phrase):
     for response_pattern in response_patterns:
@@ -153,9 +160,9 @@ def generate_response(user_phrase):
                 re.sub(pronoun_pattern,
                     sub_hack,
                     random.choice(response_pattern.responses),
-                    flags=re.IGNORECASE),
+                    flags=re.IGNORECASE).replace("QQQ", "'"),
                 user_phrase)
             user_phrase = swap_pronouns(user_phrase)
-            return user_phrase.replace("QQQ", '') # scuffed hack here
+            return user_phrase.replace("XXX", '') # scuffed hack here
     else:
         return random.choice(connectors)

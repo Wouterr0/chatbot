@@ -12,7 +12,7 @@ from user_management import *
 from utils import *
 
 
-DEBUG = False
+DEBUG = False # increases verbosity
 set_debug(DEBUG)
 
 
@@ -70,13 +70,18 @@ def get_register_or_login():
     choice = input().lower()
 
 def home():
+    if DEBUG:
+        print(debug("Connection was successfully"))
     print(blue("[R]egister or [L]ogin: "), end="\033[33m")
     choice = input().lower()
     if choice == "r":
         register()
         return home()
     elif choice == "l":
-        return login()
+        if (usr := login()):
+            return usr
+        else:
+            return home()
     else:
         print(blue(""))
         return home()
@@ -87,6 +92,7 @@ if __name__ == "__main__":
     if not DEBUG:
         r = sr.Recognizer()
         calibrate()
+        clear_home()
     welcome(get_welcome_msg(user))
 
     while True:
