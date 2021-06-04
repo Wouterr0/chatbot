@@ -43,7 +43,7 @@ class Connection:
             cursor.execute(sql, (user_name, bcrypt.hashpw(password.encode(),
                             bcrypt.gensalt())))
         self.db_conn.commit()
-        return get_user_data_by_username(user_name)["user_id"]
+        return self.get_user_data_by_username(user_name)["user_id"]
 
     def get_user_data_by_username(self, user_name):
         with self.db_conn.cursor() as cursor:

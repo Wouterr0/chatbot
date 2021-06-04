@@ -12,7 +12,7 @@ from user_management import *
 from utils import *
 
 
-DEBUG = False # increases verbosity
+DEBUG = True # increases verbosity
 set_debug(DEBUG)
 
 

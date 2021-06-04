@@ -54,8 +54,13 @@ response_patterns = [
     R(r"what's your (.*)", [
         r"I don't have a \g<1>."]),
     
-    R(r"would you like to (.*)", [
-        r"I don't know."]),
+    R(r"would you ((like to )?(.*))", [
+        r"I would really \g<1>.",
+        r"I would really hate to \g<3>.",
+        r"I don't know if I would \g<1>."]),
+    
+    R(r"(?:.*)?cyka blyat(?:.*)?", [
+        r"Rush B no stop, my fellow comrad."]),
     
     R(r"is (.*)", [
         r"I think so?",
@@ -160,8 +165,8 @@ def generate_response(user_phrase):
                 re.sub(pronoun_pattern,
                     sub_hack,
                     random.choice(response_pattern.responses),
-                    flags=re.IGNORECASE).replace("QQQ", "'"),
-                user_phrase)
+                    flags=re.IGNORECASE),
+                user_phrase).replace("QQQ", "'")
             user_phrase = swap_pronouns(user_phrase)
             return user_phrase.replace("XXX", '') # scuffed hack here
     else:
