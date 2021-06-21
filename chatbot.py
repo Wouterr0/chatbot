@@ -97,7 +97,7 @@ response_patterns = [
         r"I don't think you \g<1> \g<2>."]),
 
     R(r"(?:stop|goodbye|bye|see you|fuck off|adios|au revoir|doei|doeg)(.*)", [
-        r"I will never go away\g<1>.",
+        r"Never gonna give you up!\g<1>.",
         exit]),
 
     R(r"f(?:uck)?\s(?:u|you)(\s.*)?", [
