@@ -21,10 +21,6 @@ response_patterns = [
         "G'day mate",
         "wazzup"]),
     
-    R(r"no", [
-        "Ok.",
-        "Maybe not then."]),
-    
     R(r"(what's up|how do you feel|how are you)(\s\w+)?", [
         "Great! How about you?",
         "Fantastic! How are you?",
@@ -67,6 +63,14 @@ response_patterns = [
         r"I don't think so?",
         r"Yes, right?",
         r"No, right?"]),
+    
+    R(r"yes(?:\b.*)?", [
+        r"Ok."
+        r"What do you mean \g<0>?! I expected a no from you."]),
+    
+    R(r"no(?:\b.*)?", [
+        r"Maybe not then."
+        r"What do you mean \g<0>?! I expected a yes from you."]),
     
     R(r"are you (.*)", [
         r"Last time I checked I wasn't \g<1>.",
