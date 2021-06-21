@@ -12,7 +12,7 @@ from user_management import *
 from utils import *
 
 
-DEBUG = True # increases verbosity
+DEBUG = True  # increases verbosity
 set_debug(DEBUG)
 
 
@@ -23,10 +23,12 @@ def calibrate():
         r.adjust_for_ambient_noise(source)
     print(green("done"))
 
+
 def welcome(welcome_message):
     print(blue(welcome_message))
     if not DEBUG:
         say(welcome_message)
+
 
 def listen(text):
     print(green("Listening..."), end='\r')
@@ -38,12 +40,14 @@ def listen(text):
         audio = r.listen(source, phrase_time_limit=10)
     return r.recognize_google(audio)#, language="zh-CN")
 
+
 def say(text):
     # print(f"saying {text=}")
     tts = gTTS(text, tld="co.uk", lang="en")
     with open(".tmp.mp3", 'wb') as f:
         tts.write_to_fp(f)
     playsound(".tmp.mp3")
+
 
 def get_user_input():
     while True:
@@ -60,18 +64,16 @@ def get_user_input():
                 break
     return user_phrase
 
+
 def give_user_output(output):
     print(blue(output))
     if not DEBUG:
         say(output)
 
-def get_register_or_login():
-    print(blue("[R]egister or [L]ogin: "), end="\033[33m")
-    choice = input().lower()
 
 def home():
     if DEBUG:
-        print(debug("Connection was successfully"))
+        print(debug("Connection was successful"))
     print(blue("[R]egister or [L]ogin: "), end="\033[33m")
     choice = input().lower()
     if choice == "r":
@@ -97,7 +99,6 @@ if __name__ == "__main__":
 
     while True:
         user_phrase = get_user_input()
-        
+
         chatbot_response = generate_response(user_phrase.lower())
         give_user_output(chatbot_response)
-
