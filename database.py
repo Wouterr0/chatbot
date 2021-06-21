@@ -39,7 +39,9 @@ class Connection:
 
     def add_user(self, user_name: str, password: str,
                  birth_date: datetime.date = None) -> int:
-        birth_date = f"'{str(birth_date)}'" if birth_date is not None else "NULL"
+        birth_date = (f"'{str(birth_date)}'"
+                      if birth_date is not None
+                      else "NULL")
         with self.db_conn.cursor() as cursor:
             sql = ("INSERT INTO `Users`(`user_name`, `password_hash`,"
                    "`signup_time`, `birth_date`) VALUES (%s,%s,NOW(),"
@@ -84,8 +86,8 @@ class Connection:
                    "    user_id INT UNSIGNED AUTO_INCREMENT,"
                    "    user_name TEXT UNIQUE COLLATE utf8_bin,"
                    "    password_hash TEXT,"
-                   "    signup_date DATE NOT NULL,"
-                   "    bith_date DATE NOT NULL,"
+                   "    signup_time TIME NOT NULL,"
+                   "    birth_date DATE,"
                    "    PRIMARY KEY (user_id)"
                    ");")
             cursor.execute(sql)
@@ -93,7 +95,7 @@ class Connection:
 
 
 if __name__ == "__main__":
-    print(debug("Creating (if not exists) database Users"))
+    print(debug("Creating (if not exists or empty) database Users"))
     connection = Connection()
     connection.connect()
     connection.create_db()

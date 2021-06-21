@@ -35,10 +35,10 @@ def listen(text):
     print("\033[K", end='')
     # return input("input: ")
     with sr.Microphone() as source:
-        if text != None:
+        if text is not None:
             print(text)
         audio = r.listen(source, phrase_time_limit=10)
-    return r.recognize_google(audio)#, language="zh-CN")
+    return r.recognize_google(audio)  # language="zh-CN")
 
 
 def say(text):

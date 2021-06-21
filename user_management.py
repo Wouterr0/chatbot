@@ -10,7 +10,7 @@ from utils import *
 class User:
     '''
     We want to drop dangerous data like password hashes as fast as
-    possible so that is not storred here. 
+    possible so that is not storred here.
     '''
     def __init__(self, user_id: int, user_name: str,
                  signup_time: datetime.datetime,
@@ -35,31 +35,38 @@ except pymysql.err.OperationalError as e:
     print(red("Connection to database failed: {}".format(bold(e.args[1]))))
     exit(1)
 
+
 def login() -> User:
     print(blue("Username: "), end="\033[1;33m")
     user_name = input()
-    if (not (3 <= len(user_name) <= 16) or any(c not in ("abcdefghijklmnopqrstuvwxyz"
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890") for c in user_name)):
+    if (not (3 <= len(user_name) <= 16)
+            or any(c not in ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV"
+                             "WXYZ1234567890") for c in user_name)):
         print(green("Invalid name, please try again..."))
         return None
-    elif conn.get_user_data_by_username(user_name) == None:
-        print(green("No user called \"{}\", please try again...".format(yellow(user_name))))
+    elif conn.get_user_data_by_username(user_name) is None:
+        print(green("No user called \"{}\", please try again..."
+              .format(yellow(user_name))))
         return None
     else:
-        password = getpass.getpass("\033[0m" + blue("Password: ") + "\033[1;33m")
-        if (user_id := conn.login(user_name, password)) == None:
+        password = getpass.getpass("\033[0m"
+                                   + blue("Password: ")
+                                   + "\033[1;33m")
+        if (user_id := conn.login(user_name, password)) is None:
             print(green("Something went wrong, please try again..."))
             return None
         return User.from_id(user_id)
-    
+
+
 def register():
     print(blue("Username: "), end="\033[1;33m")
     user_name = input()
-    if (not (3 <= len(user_name) <= 16) or any(c not in ("abcdefghijklmnopqrstuvwxyz"
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890") for c in user_name)):
+    if (not (3 <= len(user_name) <= 16)
+            or any(c not in ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV"
+                             "WXYZ1234567890") for c in user_name)):
         print(green("Invalid name, please try again..."))
         register()
-    elif conn.get_user_data_by_username(user_name) != None:
+    elif conn.get_user_data_by_username(user_name) is not None:
         print(green("Name already taken, please try again..."))
         return
     else:
@@ -69,4 +76,3 @@ def register():
             register()
         else:
             conn.add_user(user_name, password)
-

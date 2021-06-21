@@ -1,5 +1,6 @@
 SpeechRecognition
 gTTS
+PyAudio
 playsound
 pymysql
 bcrypt
