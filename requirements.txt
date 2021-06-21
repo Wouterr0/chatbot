@@ -2,4 +2,4 @@ SpeechRecognition
 gTTS
 playsound
 pymysql
-brcypt
+bcrypt
